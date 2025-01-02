@@ -12,7 +12,8 @@ add_library(text_processing
         src/text_processing/utf8_handler.cpp
         include/text_processing/suffix_array_builder.hpp
         include/text_processing/naive_suffix_builder.hpp
-#        src/text_processing/naive_suffix_builder.cpp
+        src/text_processing/naive_suffix_builder.cpp
+        src/text_processing/suffix_array_builder.cpp
 )
 
 # Fetch and configure Google Test

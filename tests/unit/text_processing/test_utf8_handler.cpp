@@ -101,6 +101,17 @@ TEST_F(UTF8StringTest, CharacterComparison) {
     EXPECT_LT(str1[2], str3[2]);  // გ < დ
 }
 
+// Test character comparison
+TEST_F(UTF8StringTest, CharacterComparisonBetweenCodes) {
+    UTF8String str1("აბგ#\x01");
+
+    // Test character ordering
+    EXPECT_LT(str1[3], str1[0]);  // # < გ
+    EXPECT_LT(str1[4], str1[0]);  // \x01 < გ
+    EXPECT_EQ(str1.length(), 5);
+}
+
+
 // Test string comparison
 TEST_F(UTF8StringTest, StringComparison) {
     UTF8String str1("აბგ");
@@ -110,6 +121,14 @@ TEST_F(UTF8StringTest, StringComparison) {
     EXPECT_EQ(str1, str2);
     EXPECT_NE(str1, str3);
     EXPECT_LT(str1, str3);
+}
+
+// Test string comparison
+TEST_F(UTF8StringTest, StringComparisonBetweenCodes) {
+    UTF8String str1("\x01");
+    UTF8String str2("ა");
+
+    EXPECT_LT(str1, str2);
 }
 
 // Test emoji handling

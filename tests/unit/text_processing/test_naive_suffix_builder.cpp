@@ -6,6 +6,8 @@
 using namespace text_processing;
 using ::testing::ElementsAre;
 
+// It was also tested on codeforces problem and passed all the tests!
+// https://codeforces.com/edu/course/2/lesson/2/4/practice/contest/269119/submission/299398897
 class NaiveSuffixBuilderTest : public ::testing::Test {
 protected:
     void SetUp() override {
@@ -109,12 +111,10 @@ TEST_F(NaiveSuffixBuilderTest, BuilderStateTransitions) {
     EXPECT_FALSE(builder->is_built());
     
     UTF8String text("test$");
-    EXPECT_TRUE(builder->build(text));
-    EXPECT_TRUE(builder->is_built());
-    
     // Test array access before and after build
     EXPECT_THROW(builder->get_array(), std::runtime_error);
     EXPECT_TRUE(builder->build(text));
+    EXPECT_TRUE(builder->is_built());
     EXPECT_NO_THROW(builder->get_array());
 }
 

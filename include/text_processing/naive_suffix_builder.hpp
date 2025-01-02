@@ -82,7 +82,7 @@ private:
      * @param c Equivalence classes array
      * @return Number of distinct equivalence classes
      */
-    size_t sort_characters(std::vector<size_t>& p, std::vector<size_t>& c);
+    size_t sort_characters(std::vector<size_t>& p, std::vector<size_t>& c) const;
 
     /**
      * @brief Sort cyclic substrings of length 2^k
@@ -95,7 +95,7 @@ private:
      * @param classes Number of equivalence classes
      * @return New number of equivalence classes
      */
-    size_t sort_doubled(size_t k, std::vector<size_t>& p, std::vector<size_t>& c, size_t classes);
+    size_t sort_doubled(size_t k, std::vector<size_t>& p, std::vector<size_t>& c, size_t classes) const;
 
     /**
      * @brief Build the LCP array using Kasai's algorithm
