@@ -4,7 +4,7 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include <unordered_map>
+#include <set>
 #include "text_processing/utf8_handler.hpp"
 
 namespace text_processing {
@@ -16,6 +16,14 @@ struct DocumentPosition {
     int64_t sql_id;         ///< SQL database ID of the document
     size_t start_pos;       ///< Start position in concatenated text
     size_t length;          ///< Length in UTF-8 characters
+
+    // Adding comparison operators for sorting
+    bool operator<(const DocumentPosition& other) const {
+        return sql_id < other.sql_id;
+    }
+    bool operator==(const DocumentPosition& other) const {
+        return sql_id == other.sql_id;
+    }
 };
 
 /**
@@ -27,7 +35,7 @@ public:
      * @brief Constructor
      * @param separator UTF-8 character to use as document separator
      */
-    explicit DocumentStore(const UTF8String& separator = UTF8String("|"));
+    explicit DocumentStore(UTF8String  separator = UTF8String("$"));
 
     // Prevent copying, allow moving
     DocumentStore(const DocumentStore&) = delete;
@@ -59,12 +67,15 @@ public:
 private:
     UTF8String separator_;                      ///< Document separator character
     UTF8String concatenated_text_;              ///< All documents concatenated
-    std::vector<DocumentPosition> documents_;    ///< Document positions
+    std::set<DocumentPosition> documents_;    ///< Document positions, sorted by sql_id
+    std::vector<DocumentPosition> pos_index_;    ///< Document positions, sorted by start_pos
 
     /**
-     * @brief Rebuild concatenated text after adding documents
+     * @brief Find document by SQL ID using binary search
+     * @param sql_id SQL ID to find
+     * @return iterator to document if found, documents_.end() if not
      */
-    void rebuild_concatenated_text();
+    [[nodiscard]] std::set<DocumentPosition>::const_iterator find_by_sql_id(int64_t sql_id) const;
 };
 
 } // namespace text_processing

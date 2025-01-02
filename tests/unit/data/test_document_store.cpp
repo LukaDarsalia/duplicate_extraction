@@ -40,24 +40,24 @@ TEST_F(DocumentStoreTest, FindDocumentId) {
     EXPECT_EQ(doc1.length, 11); // "Hello World" length
 
     auto doc2 = store->find_document_id(11);
-    EXPECT_EQ(doc1.sql_id, 1);
-    EXPECT_EQ(doc1.start_pos, 0);
-    EXPECT_EQ(doc1.length, 11); // "Hello World" length
+    EXPECT_EQ(doc2.sql_id, 1);
+    EXPECT_EQ(doc2.start_pos, 0);
+    EXPECT_EQ(doc2.length, 11); // "გამარჯობა" length
 
     auto doc3 = store->find_document_id(12);
-    EXPECT_EQ(doc1.sql_id, 2);
-    EXPECT_EQ(doc1.start_pos, 12);
-    EXPECT_EQ(doc1.length, 9); // "Hello World" length
+    EXPECT_EQ(doc3.sql_id, 2);
+    EXPECT_EQ(doc3.start_pos, 12);
+    EXPECT_EQ(doc3.length, 9); // "გამარჯობა" length
 
     auto doc4 = store->find_document_id(21);
-    EXPECT_EQ(doc1.sql_id, 2);
-    EXPECT_EQ(doc1.start_pos, 12);
-    EXPECT_EQ(doc1.length, 9); // "Hello World" length
+    EXPECT_EQ(doc4.sql_id, 2);
+    EXPECT_EQ(doc4.start_pos, 12);
+    EXPECT_EQ(doc4.length, 9); // "Testing 123" length
 
     auto doc5 = store->find_document_id(22);
-    EXPECT_EQ(doc1.sql_id, 3);
-    EXPECT_EQ(doc1.start_pos, 22);
-    EXPECT_EQ(doc1.length, 11); // "Hello World" length
+    EXPECT_EQ(doc5.sql_id, 3);
+    EXPECT_EQ(doc5.start_pos, 22);
+    EXPECT_EQ(doc5.length, 11); // "Testing 123" length
 
     // Invalid position
     EXPECT_THROW(store->find_document_id(999), std::out_of_range);

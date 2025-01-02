@@ -15,6 +15,7 @@ add_library(text_processing
         include/data/document_store.hpp
         src/text_processing/naive_suffix_builder.cpp
         src/text_processing/suffix_array_builder.cpp
+        src/data/document_store.cpp
 )
 
 # Fetch and configure Google Test
