@@ -145,7 +145,7 @@ TEST_F(UTF8StringTest, Concatenation) {
     UTF8String str3 = str1 + str2;
 
     EXPECT_EQ(str3.str(), "გამარ");
-    EXPECT_EQ(str3.length(), 4);
+    EXPECT_EQ(str3.length(), 5);
 }
 
 // Test for correct handling of string boundaries

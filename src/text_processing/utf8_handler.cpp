@@ -57,12 +57,79 @@ UTF8String::UTF8String(const std::string& str) : data_(str), char_count_(0) {
 }
 
 void UTF8String::indexString() {
-    // This is a placeholder implementation
-    // We'll implement proper UTF-8 handling here
-    char_count_ = data_.length();  // Temporarily treat each byte as a character
     char_pos_.clear();
-    for (size_t i = 0; i < data_.length(); ++i) {
-        char_pos_.push_back(i);
+    char_count_ = 0;
+
+    if (data_.empty()) {
+        return;
+    }
+
+    const auto* bytes = reinterpret_cast<const unsigned char*>(data_.c_str());
+    size_t len = data_.length();
+    size_t pos = 0;
+
+    while (pos < len) {
+        char_pos_.push_back(pos);
+
+        // Get number of bytes in current character
+        unsigned char first_byte = bytes[pos];
+        int char_bytes;
+
+        if ((first_byte & 0x80) == 0) {
+            // Single byte character (0xxxxxxx)
+            char_bytes = 1;
+        } else if ((first_byte & 0xE0) == 0xC0) {
+            // Two byte character (110xxxxx)
+            char_bytes = 2;
+        } else if ((first_byte & 0xF0) == 0xE0) {
+            // Three byte character (1110xxxx)
+            char_bytes = 3;
+        } else if ((first_byte & 0xF8) == 0xF0) {
+            // Four byte character (11110xxx)
+            char_bytes = 4;
+        } else {
+            // Invalid UTF-8 sequence
+            throw UTF8Error("Invalid UTF-8 sequence at position " + std::to_string(pos));
+        }
+
+        // Check if we have enough bytes
+        if (pos + char_bytes > len) {
+            throw UTF8Error("Truncated UTF-8 sequence at position " + std::to_string(pos));
+        }
+
+        // Validate continuation bytes
+        for (int i = 1; i < char_bytes; i++) {
+            if ((bytes[pos + i] & 0xC0) != 0x80) {
+                throw UTF8Error("Invalid UTF-8 continuation byte at position " +
+                              std::to_string(pos + i));
+            }
+        }
+
+        // Validate against overlong encodings
+        switch (char_bytes) {
+            case 2:
+                if ((first_byte & 0x1E) == 0) {
+                    throw UTF8Error("Overlong UTF-8 encoding at position " +
+                                  std::to_string(pos));
+                }
+                break;
+            case 3:
+                if (first_byte == 0xE0 && (bytes[pos + 1] & 0x20) == 0) {
+                    throw UTF8Error("Overlong UTF-8 encoding at position " +
+                                  std::to_string(pos));
+                }
+                break;
+            case 4:
+                if (first_byte == 0xF0 && (bytes[pos + 1] & 0x30) == 0) {
+                    throw UTF8Error("Overlong UTF-8 encoding at position " +
+                                  std::to_string(pos));
+                }
+                break;
+            default: break;
+        }
+
+        pos += char_bytes;
+        char_count_++;
     }
 }
 
@@ -70,19 +137,25 @@ UTF8String::Character UTF8String::operator[](size_t index) const {
     if (index >= char_count_) {
         throw std::out_of_range("Character index out of range");
     }
+
+    size_t start = char_pos_[index];
+    size_t length;
+
     if (index + 1 < char_count_) {
-        return Character(data_.substr(char_pos_[index],
-                                    char_pos_[index + 1] - char_pos_[index]));
+        length = char_pos_[index + 1] - start;
+    } else {
+        length = data_.length() - start;
     }
-    return Character(data_.substr(char_pos_[index]));
+
+    return Character(data_.substr(start, length));
 }
 
 UTF8String::Iterator UTF8String::begin() const {
-    return Iterator(this, 0);
+    return {this, 0};
 }
 
 UTF8String::Iterator UTF8String::end() const {
-    return Iterator(this, char_count_);
+    return {this, char_count_};
 }
 
 UTF8String UTF8String::substr(size_t start, size_t length) const {
@@ -95,10 +168,16 @@ UTF8String UTF8String::substr(size_t start, size_t length) const {
     if (length == 0) {
         return UTF8String("");
     }
+
     size_t begin_pos = char_pos_[start];
-    size_t end_pos = (start + length < char_count_)
-                     ? char_pos_[start + length]
-                     : data_.length();
+    size_t end_pos;
+
+    if (start + length < char_count_) {
+        end_pos = char_pos_[start + length];
+    } else {
+        end_pos = data_.length();
+    }
+
     return UTF8String(data_.substr(begin_pos, end_pos - begin_pos));
 }
 
