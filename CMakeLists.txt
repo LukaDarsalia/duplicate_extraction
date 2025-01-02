@@ -10,6 +10,9 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 # Add library
 add_library(text_processing
         src/text_processing/utf8_handler.cpp
+        include/text_processing/suffix_array_builder.hpp
+        include/text_processing/naive_suffix_builder.hpp
+#        src/text_processing/naive_suffix_builder.cpp
 )
 
 # Fetch and configure Google Test
@@ -25,16 +28,31 @@ FetchContent_MakeAvailable(googletest)
 # Enable testing
 enable_testing()
 
-# Add test executable
+# Add test executables
 add_executable(utf8_tests
         tests/unit/text_processing/test_utf8_handler.cpp
 )
 
+# Add test executables
+add_executable(naive_suffix_builder_tests
+        tests/unit/text_processing/test_naive_suffix_builder.cpp
+)
+
+# Link libraries
 target_link_libraries(utf8_tests
         PRIVATE
         text_processing
         GTest::gtest_main
 )
 
+target_link_libraries(naive_suffix_builder_tests
+        PRIVATE
+        text_processing
+        GTest::gtest_main
+        GTest::gmock_main
+)
+
+# Discover tests
 include(GoogleTest)
 gtest_discover_tests(utf8_tests)
+gtest_discover_tests(naive_suffix_builder_tests)

@@ -150,7 +150,8 @@ namespace text_processing {
         /**
          * @brief Default constructor
          */
-        Iterator() : str_(nullptr), pos_(0), current_("") {}
+        Iterator() : str_(nullptr), pos_(0), current_("") {
+        }
 
         Iterator &operator++();
 
