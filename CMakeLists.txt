@@ -13,6 +13,8 @@ add_library(text_processing
         include/text_processing/suffix_array_builder.hpp
         include/text_processing/naive_suffix_builder.hpp
         include/data/document_store.hpp
+        include/data/duplicate_match.hpp
+        include/text_processing/duplicate_finder.hpp
         src/text_processing/naive_suffix_builder.cpp
         src/text_processing/suffix_array_builder.cpp
         src/data/document_store.cpp
@@ -46,6 +48,10 @@ add_executable(document_store
         tests/unit/data/test_document_store.cpp
 )
 
+add_executable(duplicate_finder
+        tests/unit/text_processing/test_duplicate_finder.cpp
+)
+
 # Link libraries
 target_link_libraries(utf8_tests
         PRIVATE
@@ -66,8 +72,16 @@ target_link_libraries(naive_suffix_builder_tests
         GTest::gmock_main
 )
 
+target_link_libraries(duplicate_finder
+        PRIVATE
+        text_processing
+        GTest::gtest_main
+        GTest::gmock_main
+)
+
 # Discover tests
 include(GoogleTest)
 gtest_discover_tests(utf8_tests)
 gtest_discover_tests(naive_suffix_builder_tests)
 gtest_discover_tests(document_store)
+gtest_discover_tests(duplicate_finder)

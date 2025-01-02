@@ -2,7 +2,6 @@
 #define TEXT_PROCESSING_SUFFIX_ARRAY_BUILDER_HPP
 
 #include <vector>
-#include <memory>
 #include "text_processing/utf8_handler.hpp"
 
 namespace text_processing {
