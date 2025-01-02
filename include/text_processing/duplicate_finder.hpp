@@ -21,6 +21,8 @@ public:
         SuffixArrayBuilder::BuilderType builder_type = SuffixArrayBuilder::BuilderType::NAIVE
     );
 
+    std::vector<Match> find_duplicates(const DocumentStore &store, size_t min_length);
+
     /**
      * @brief Find duplicate text between documents
      * 
@@ -32,7 +34,7 @@ public:
     std::vector<Match> find_duplicates(
         const DocumentStore& store,
         size_t min_length
-    );
+    ) const;
 
 private:
     std::unique_ptr<SuffixArrayBuilder> suffix_builder_;

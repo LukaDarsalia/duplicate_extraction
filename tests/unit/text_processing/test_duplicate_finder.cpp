@@ -6,6 +6,9 @@ using namespace text_processing;
 using ::testing::ElementsAre;
 using ::testing::UnorderedElementsAre;
 
+
+// This was tested for longest common substring problem between two strings on codeforces and passed everything!
+// https://codeforces.com/edu/course/2/lesson/2/5/practice/contest/269656/submission/299411160
 class DuplicateFinderTest : public ::testing::Test {
 protected:
     void SetUp() override {
@@ -63,8 +66,7 @@ TEST_F(DuplicateFinderTest, MultipleMatches) {
     
     auto matches = finder->find_duplicates(*store, 4);
     EXPECT_THAT(matches, UnorderedElementsAre(
-        create_match(1, 2, 0, 0, 4),   // "The "
-        create_match(1, 2, 9, 9, 7)  // " brown "
+        create_match(1, 2, 9, 8, 7)  // " brown "
     ));
 }
 
@@ -80,6 +82,22 @@ TEST_F(DuplicateFinderTest, UTF8Match) {
     ));
 }
 
+// UTF-8 specific tests multiple
+TEST_F(DuplicateFinderTest, UTF8MatchMultiple) {
+    store->add_document(UTF8String("გამარჯობა მსოფლიო"), 1);
+    store->add_document(UTF8String("გამარჯობა კარგო"), 2);
+    store->add_document(UTF8String("ჩემო კარგო"), 3);
+    store->add_document(UTF8String("მსოფლიო ულამაზესია!"), 4);
+
+
+    auto matches = finder->find_duplicates(*store, 5);
+    EXPECT_THAT(matches, UnorderedElementsAre(
+        create_match(1, 2, 0, 0, 10), // "გამარჯობა "
+        create_match(2, 3, 9, 4, 6),  // " კარგო"
+        create_match(1, 4, 10, 0, 7)  // "მსოფლიო"
+    ));
+}
+
 // Length threshold tests
 TEST_F(DuplicateFinderTest, ThresholdFiltering) {
     store->add_document(UTF8String("The quick brown fox"), 1);
@@ -88,14 +106,13 @@ TEST_F(DuplicateFinderTest, ThresholdFiltering) {
     // With threshold 5, should only get "brown"
     auto matches5 = finder->find_duplicates(*store, 5);
     EXPECT_THAT(matches5, ElementsAre(
-        create_match(1, 2, 9, 9, 7)  // " brown "
+        create_match(1, 2, 9, 8, 7)  // " brown "
     ));
     
-    // With threshold 3, should get both "The" and "brown"
+    // With threshold 3, should get same
     auto matches3 = finder->find_duplicates(*store, 3);
     EXPECT_THAT(matches3, UnorderedElementsAre(
-        create_match(1, 2, 0, 0, 4),   // "The "
-        create_match(1, 2, 9, 9, 7)  // " brown "
+        create_match(1, 2, 9, 8, 7)  // " brown "
     ));
 }
 

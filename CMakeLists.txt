@@ -18,6 +18,7 @@ add_library(text_processing
         src/text_processing/naive_suffix_builder.cpp
         src/text_processing/suffix_array_builder.cpp
         src/data/document_store.cpp
+        src/text_processing/duplicate_finder.cpp
 )
 
 # Fetch and configure Google Test
