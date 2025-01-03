@@ -1,4 +1,6 @@
 #include "sql/sql_handler.hpp"
+
+#include <iostream>
 #include <stdexcept>
 #include <sstream>
 #include <regex>
@@ -13,7 +15,8 @@ bool isValidName(const std::string& name) {
 
 namespace text_processing {
 
-SQLiteHandler::SQLiteHandler(const std::string& db_path) {
+SQLiteHandler::SQLiteHandler(const std::string& db_path, bool verbose) {
+    verbose_ = verbose;
     if (sqlite3_open(db_path.c_str(), &db_connection_) != SQLITE_OK) {
         throw SQLiteError("Failed to open database: " + db_path);
     }
@@ -26,6 +29,7 @@ SQLiteHandler::~SQLiteHandler() {
 SQLiteHandler::SQLiteHandler(SQLiteHandler&& other) noexcept
     : db_connection_(other.db_connection_) {
     other.db_connection_ = nullptr;
+    verbose_ = other.verbose_;
 }
 
 SQLiteHandler& SQLiteHandler::operator=(SQLiteHandler&& other) noexcept {
@@ -33,6 +37,7 @@ SQLiteHandler& SQLiteHandler::operator=(SQLiteHandler&& other) noexcept {
         close();
         db_connection_ = other.db_connection_;
         other.db_connection_ = nullptr;
+        verbose_ = other.verbose_;
     }
     return *this;
 }
@@ -41,6 +46,7 @@ void SQLiteHandler::close() {
     if (db_connection_) {
         sqlite3_close(db_connection_);
         db_connection_ = nullptr;
+        if (verbose_) std::cout << "Closing database." << std::endl;
     }
 }
 
@@ -51,11 +57,12 @@ DocumentStore SQLiteHandler::createDocumentStore(
     const std::string& filter_value
 ) {
     DocumentStore store;
-
+    if (verbose_) std::cout << "Building Query" << std::endl;
     std::string query = buildQuery(
         table_name, filter_column, content_column, filter_value
     );
 
+    if (verbose_) std::cout << "Adding Documents" << std::endl;
     executeQuery(query, [&store](sqlite3_stmt* stmt) {
         const unsigned char* content = sqlite3_column_text(stmt, 0);
         const int64_t id = sqlite3_column_int64(stmt, 1);
@@ -64,6 +71,7 @@ DocumentStore SQLiteHandler::createDocumentStore(
         store.add_document(UTF8String(content_str), id);
     });
 
+    if (verbose_) std::cout << "Finalizing string" << std::endl;
     return store;
 }
 

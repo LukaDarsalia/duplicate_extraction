@@ -167,6 +167,126 @@ TEST_F(UTF8StringTest, Concatenation) {
     EXPECT_EQ(str3.length(), 5);
 }
 
+// Basic concatenation tests
+TEST_F(UTF8StringTest, BasicAppend) {
+    UTF8String str1("Hello");
+    const UTF8String str2(" World");
+
+    str1 += str2;
+    EXPECT_EQ(str1.str(), "Hello World");
+    EXPECT_EQ(str1.length(), 11);
+}
+
+// Test empty string handling
+TEST_F(UTF8StringTest, EmptyStrings) {
+    UTF8String empty;
+    UTF8String str("Hello");
+
+    // Append to empty string
+    empty += str;
+    EXPECT_EQ(empty.str(), "Hello");
+    EXPECT_EQ(empty.length(), 5);
+
+    // Append empty string
+    UTF8String str2("World");
+    str2 += UTF8String();
+    EXPECT_EQ(str2.str(), "World");
+    EXPECT_EQ(str2.length(), 5);
+
+    // Append empty to empty
+    UTF8String empty1, empty2;
+    empty1 += empty2;
+    EXPECT_EQ(empty1.str(), "");
+    EXPECT_EQ(empty1.length(), 0);
+}
+
+// Test UTF-8 character handling
+TEST_F(UTF8StringTest, UTF8Characters) {
+    UTF8String str1("გამარჯობა");
+    UTF8String str2(" მსოფლიო");
+
+    str1 += str2;
+    EXPECT_EQ(str1.length(), 17);  // Count of actual UTF-8 characters
+
+    // Verify character access after concatenation
+    EXPECT_EQ(str1[0].str(), "გ");
+    EXPECT_EQ(str1[8].str(), "ა");
+    EXPECT_EQ(str1[9].str(), " ");
+}
+
+// Test chained operations
+TEST_F(UTF8StringTest, ChainedOperations) {
+    UTF8String str1("One");
+    UTF8String str2(" Two");
+    UTF8String str3(" Three");
+
+    // Test chaining += operations
+    (str1 += str2) += str3;
+
+    EXPECT_EQ(str1.str(), "One Two Three");
+    EXPECT_EQ(str1.length(), 13);
+}
+
+// Test mixed character sets
+TEST_F(UTF8StringTest, MixedCharacterSets) {
+    UTF8String str1("Hello გამარჯობა");
+    UTF8String str2(" 你好 World");
+
+    str1 += str2;
+
+    // Verify total length
+    size_t expected_length = 5 + 1 + 9 + 1 + 2 + 1 + 5; // Hello + Georgian + space + Chinese + space + World
+    EXPECT_EQ(str1.length(), expected_length);
+
+    // Verify character preservation
+    EXPECT_EQ(str1[6].str(), "გ");
+}
+
+// Test large string handling
+TEST_F(UTF8StringTest, LargeStrings) {
+    // Create a large string with repeated content
+    std::string large_content(1000, 'a');
+    UTF8String large_str1(large_content);
+    UTF8String large_str2(large_content);
+
+    large_str1 += large_str2;
+    EXPECT_EQ(large_str1.length(), 2000);
+    EXPECT_EQ(large_str1[0].str(), "a");
+    EXPECT_EQ(large_str1[1999].str(), "a");
+}
+
+// Test appending std::string
+TEST_F(UTF8StringTest, StdStringAppend) {
+    UTF8String utf8_str("Hello");
+    std::string std_str(" World");
+
+    utf8_str += std_str;
+    EXPECT_EQ(utf8_str.str(), "Hello World");
+    EXPECT_EQ(utf8_str.length(), 11);
+}
+
+
+// Test self-append
+TEST_F(UTF8StringTest, SelfAppend) {
+    UTF8String str("Test");
+    str += str;
+    EXPECT_EQ(str.str(), "TestTest");
+    EXPECT_EQ(str.length(), 8);
+}
+
+// Test performance with multiple appends
+TEST_F(UTF8StringTest, MultipleAppends) {
+    UTF8String str;
+    const UTF8String append_str("test");
+
+    // Perform multiple appends
+    for(int i = 0; i < 1000; ++i) {
+        str += append_str;
+    }
+
+    EXPECT_EQ(str.length(), 4000);  // 4 chars * 1000
+}
+
 // Test for correct handling of string boundaries
 TEST_F(UTF8StringTest, StringBoundaries) {
     UTF8String str("აბგ");

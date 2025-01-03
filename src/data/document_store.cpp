@@ -46,8 +46,7 @@ namespace text_processing {
         pos_index_.push_back(doc_pos); // For positions, we can just append as it's always at the end
 
         // Update concatenated text
-        concatenated_text_ = concatenated_text_ + content + separator_;
-
+        concatenated_text_ += content + separator_;
         return true;
     }
 

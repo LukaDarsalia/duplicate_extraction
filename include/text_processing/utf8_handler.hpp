@@ -83,6 +83,8 @@ namespace text_processing {
         * @brief String concatenation
         */
         UTF8String operator+(const UTF8String &other) const;
+        UTF8String& operator+=(const UTF8String& other);
+        UTF8String& operator+=(const std::string& other);
 
         /**
          * @brief Equality comparison

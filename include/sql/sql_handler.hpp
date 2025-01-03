@@ -25,9 +25,10 @@ public:
      * @brief Constructor that initializes database connection
      *
      * @param db_path Path to SQLite database file
+     * @param verbose If true, will print progress
      * @throw SQLiteError if connection cannot be established
      */
-    explicit SQLiteHandler(const std::string& db_path);
+    explicit SQLiteHandler(const std::string& db_path, bool verbose = false);
 
     /**
      * @brief Destructor ensuring proper cleanup of database connection
@@ -92,6 +93,7 @@ public:
 
 private:
     sqlite3* db_connection_{};  ///< SQLite database connection handle
+    bool verbose_;
 
     /**
      * @brief Execute SQLite query and process results
