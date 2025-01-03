@@ -134,3 +134,35 @@ TEST_F(DuplicateFinderTest, LargeThreshold) {
     auto matches = finder->find_duplicates(*store, 100);
     EXPECT_TRUE(matches.empty());
 }
+
+TEST_F(DuplicateFinderTest, SaveMatchesToJson) {
+    store->add_document(UTF8String("Hello World"), 1);
+    store->add_document(UTF8String("Say hello world"), 2);
+
+    auto matches = finder->find_duplicates(*store, 5);
+
+    // Create a temporary file
+    const std::string temp_file = "test_matches.json";
+
+    // Save matches
+    EXPECT_NO_THROW({
+        DuplicateFinder::save_matches_to_json(matches, temp_file);
+    });
+
+    // Read the file back and validate
+    std::ifstream in_file(temp_file);
+    ASSERT_TRUE(in_file.is_open());
+
+    std::string content((std::istreambuf_iterator<char>(in_file)),
+                        std::istreambuf_iterator<char>());
+
+    // Do some basic validation using manual string checks
+    EXPECT_FALSE(content.empty());
+    EXPECT_EQ(content[0], '[');
+    EXPECT_EQ(content[1], '{');
+    EXPECT_EQ(content[content.length() - 1], ']');
+    EXPECT_EQ(content[content.length() - 2], '}');
+
+    // Clean up
+    std::remove(temp_file.c_str());
+}

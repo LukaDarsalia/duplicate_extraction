@@ -1,6 +1,9 @@
 #include "text_processing/duplicate_finder.hpp"
+
+#include <fstream>
 #include <stdexcept>
 #include <map>
+
 
 namespace text_processing {
 
