@@ -61,6 +61,10 @@ add_executable(sql_handler
         tests/unit/sql/test_sql_handler.cpp
 )
 
+add_executable(main
+        main.cpp
+)
+
 # Link libraries
 target_link_libraries(utf8_tests
         PRIVATE
@@ -93,6 +97,12 @@ target_link_libraries(sql_handler
         text_processing
         GTest::gtest_main
         GTest::gmock_main
+        SQLite::SQLite3
+)
+
+target_link_libraries(main
+        PRIVATE
+        text_processing
         SQLite::SQLite3
 )
 

@@ -1,3 +1,5 @@
 cmake-build-debug
 .idea
 .DS_STORE
+RichNachos.db
+build/
