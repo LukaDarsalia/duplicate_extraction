@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
 
         if (verbose) std::cout << "Creating SQLite Handler..." << std::endl;
         // Create SQLite Handler
-        text_processing::SQLiteHandler sql_handler(db_path);
+        text_processing::SQLiteHandler sql_handler(db_path, verbose);
 
         if (verbose) std::cout << "Validating..." << std::endl;
         // Validate table and columns exist
@@ -59,13 +59,14 @@ int main(int argc, char* argv[]) {
             "data_table",   // table name
             "domains",      // filter column
             "doc_content",     // content column
-            domain         // filter value
+            domain,         // filter value
+            "\x01"
         );
 
         if (verbose) std::cout << "Finding duplicates..." << std::endl;
         // Find duplicates
         text_processing::DuplicateFinder finder;
-        auto matches = finder.find_duplicates(store, threshold);
+        auto matches = finder.find_duplicates(store, threshold, verbose);
 
         if (verbose) std::cout << "Saving Results..." << std::endl;
         // Save matches to JSON

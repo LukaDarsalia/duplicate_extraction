@@ -64,6 +64,11 @@ public:
      */
     [[nodiscard]] const UTF8String& get_concatenated_text() const { return concatenated_text_; }
 
+    void reserve(size_t total_size) {
+        concatenated_text_.reserve(total_size);
+        pos_index_.reserve(total_size / 1000);
+    }
+
 private:
     UTF8String separator_;                      ///< Document separator character
     UTF8String concatenated_text_;              ///< All documents concatenated

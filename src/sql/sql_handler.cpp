@@ -1,5 +1,6 @@
 #include "sql/sql_handler.hpp"
 
+#include <iomanip>
 #include <iostream>
 #include <stdexcept>
 #include <sstream>
@@ -54,24 +55,46 @@ DocumentStore SQLiteHandler::createDocumentStore(
     const std::string& table_name,
     const std::string& filter_column,
     const std::string& content_column,
-    const std::string& filter_value
+    const std::string& filter_value,
+    const std::string& separator
 ) {
-    DocumentStore store;
+    // Get approximate total size first
+    std::string size_query = "SELECT COUNT(*), SUM(LENGTH(" + content_column + ")) "
+                            "FROM " + table_name +
+                            " WHERE " + filter_column + " = '" + filter_value + "'";
+
+    size_t doc_count = 0;
+    size_t total_size = 0;
+
+    executeQuery(size_query, [&](sqlite3_stmt* stmt) {
+        doc_count = sqlite3_column_int64(stmt, 0);
+        total_size = sqlite3_column_int64(stmt, 1);
+    });
+    UTF8String sep = UTF8String(separator);
+    DocumentStore store(sep);
+    store.reserve(total_size);
     if (verbose_) std::cout << "Building Query" << std::endl;
     std::string query = buildQuery(
         table_name, filter_column, content_column, filter_value
     );
-
+    int current = 0;
     if (verbose_) std::cout << "Adding Documents" << std::endl;
-    executeQuery(query, [&store](sqlite3_stmt* stmt) {
+    executeQuery(query, [&store, &current, this, &doc_count](sqlite3_stmt* stmt) {
         const unsigned char* content = sqlite3_column_text(stmt, 0);
         const int64_t id = sqlite3_column_int64(stmt, 1);
-
+        if (verbose_) {
+            if (current % std::max((int)doc_count / 100, 100) == 0 || current == doc_count) {
+                        float percentage = (float)current / doc_count * 100;
+                        std::cout << "\rProcessing documents... " << current << "/" << doc_count
+                                 << " (" << std::fixed << std::setprecision(1) << percentage << "%)"
+                                 << std::flush;
+                    }
+        }
         std::string content_str(reinterpret_cast<const char*>(content));
         store.add_document(UTF8String(content_str), id);
+        current++;
     });
 
-    if (verbose_) std::cout << "Finalizing string" << std::endl;
     return store;
 }
 

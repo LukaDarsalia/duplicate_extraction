@@ -29,7 +29,7 @@ namespace text_processing {
          * @return std::vector<Match> Vector of found matches, sorted by length (descending)
          * @throw std::runtime_error if suffix array construction fails
          */
-        std::vector<Match> find_duplicates(const DocumentStore &store, size_t min_length);
+        std::vector<Match> find_duplicates(const DocumentStore &store, size_t min_length, bool verbose=false);
 
         static void save_matches_to_json(
             const std::vector<Match> &matches,

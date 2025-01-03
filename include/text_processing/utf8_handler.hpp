@@ -83,8 +83,10 @@ namespace text_processing {
         * @brief String concatenation
         */
         UTF8String operator+(const UTF8String &other) const;
-        UTF8String& operator+=(const UTF8String& other);
-        UTF8String& operator+=(const std::string& other);
+
+        UTF8String &operator+=(const UTF8String &other);
+
+        UTF8String &operator+=(const std::string &other);
 
         /**
          * @brief Equality comparison
@@ -97,6 +99,12 @@ namespace text_processing {
          * @brief Less than comparison (lexicographical)
          */
         bool operator<(const UTF8String &other) const;
+
+        // Add this method to allow pre-allocation
+        void reserve(size_t size) {
+            data_.reserve(size);
+            char_pos_.reserve(size);
+        }
 
     private:
         std::string data_; // Raw UTF-8 encoded string

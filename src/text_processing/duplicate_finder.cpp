@@ -1,6 +1,7 @@
 #include "text_processing/duplicate_finder.hpp"
 
 #include <fstream>
+#include <iostream>
 #include <stdexcept>
 #include <map>
 
@@ -12,19 +13,21 @@ namespace text_processing {
 
     std::vector<Match> DuplicateFinder::find_duplicates(
         const DocumentStore &store,
-        size_t min_length
+        size_t min_length,
+        bool verbose
     ) {
+        if (verbose) std::cout << "Returns concatenated text" << std::endl;
         // Get concatenated text from store
         const auto &text = store.get_concatenated_text();
         if (text.length() == 0) {
             return {};
         }
-
+        if (verbose) std::cout << "Starts Building Suffix Array" << std::endl;
         // Build suffix array and LCP array
         if (!suffix_builder_->build(text)) {
             throw std::runtime_error("Failed to build suffix array");
         }
-
+        if (verbose) std::cout << "Starts Finding Matches" << std::endl;
         return process_matches(store, min_length);
     }
 

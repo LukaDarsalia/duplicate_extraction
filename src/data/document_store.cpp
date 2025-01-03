@@ -1,6 +1,7 @@
 #include "data/document_store.hpp"
 #include <stdexcept>
 #include <algorithm>
+#include <iostream>
 
 namespace text_processing {
     DocumentStore::DocumentStore(UTF8String separator)

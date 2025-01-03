@@ -60,7 +60,8 @@ public:
         const std::string& table_name,
         const std::string& filter_column,
         const std::string& content_column,
-        const std::string& filter_value
+        const std::string& filter_value,
+        const std::string& separator = "$"
     );
 
     /**
