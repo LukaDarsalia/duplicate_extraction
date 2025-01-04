@@ -165,9 +165,10 @@ class ParquetToSQLiteConverter:
         parquet_file = pq.ParquetFile(str(self.input_file))
         total_rows = parquet_file.metadata.num_rows
 
-        # Read in chunks
-        for i in range(0, total_rows, self.chunk_size):
-            chunk = next(parquet_file.iter_batches(batch_size=self.chunk_size))
+        # Create iterator once and use it throughout
+        batch_iterator = parquet_file.iter_batches(batch_size=self.chunk_size)
+
+        for chunk in batch_iterator:
             df_chunk = chunk.to_pandas()
             yield df_chunk, total_rows
 
