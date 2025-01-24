@@ -143,12 +143,14 @@ cd build && ctest --verbose
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Acknowledgments
 
 - Suffix array implementation inspired by the CP-Algorithms website
 - UTF-8 handling based on the Unicode Standard Version 14.0
 - SQLite integration influenced by SQLite documentation and best practices
+
+
+## License
+
+This project is licensed under the MIT License - see the `LICENSE` file for details.
