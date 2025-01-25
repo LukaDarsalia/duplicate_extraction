@@ -2,6 +2,8 @@
 
 A high-performance C++ library and command-line tool for finding duplicate text across documents using suffix arrays. The project includes full UTF-8 support, efficient document storage, and SQLite integration for managing large document collections.
 
+---
+
 ## Features
 
 - Fast duplicate text detection using suffix array algorithms
@@ -13,6 +15,8 @@ A high-performance C++ library and command-line tool for finding duplicate text 
 - JSON output format for easy integration with other tools
 - Comprehensive test coverage with Google Test framework
 
+---
+
 ## Prerequisites
 
 - CMake 3.14 or higher
@@ -21,6 +25,8 @@ A high-performance C++ library and command-line tool for finding duplicate text 
 - Python 3.x (for Parquet conversion)
 - pandas (for Parquet handling)
 - pyarrow (for Parquet support)
+
+---
 
 ## Building the Project
 
@@ -45,6 +51,7 @@ make
 ```bash
 ctest --verbose
 ```
+---
 
 ## Usage
 
@@ -68,6 +75,8 @@ Example:
 ./main data.db output.json example.com 50
 ```
 
+---
+
 ### Converting Parquet to SQLite
 
 For working with Parquet files, use the provided Python converter:
@@ -75,6 +84,8 @@ For working with Parquet files, use the provided Python converter:
 ```bash
 python3 parquet_to_sqlite.py input.parquet output.db
 ```
+
+---
 
 ## Project Structure
 
@@ -95,12 +106,16 @@ The project follows a modular design with clear separation of concerns:
 - `sql/`: Database integration
   - `sql_handler`: SQLite database operations
 
+---
+
 ### Design Patterns Used
 
 - Factory Method: For suffix array builder creation
 - Strategy Pattern: For different suffix array construction algorithms
 - Iterator Pattern: For UTF-8 string traversal
 - RAII: For resource management (SQLite connections, file handles)
+
+---
 
 ## Algorithm Details
 
@@ -112,6 +127,8 @@ The duplicate detection algorithm works in several steps:
 4. Common substrings are identified by processing the LCP array
 5. Results are filtered by minimum length and document boundaries
 
+---
+
 ## Performance Considerations
 
 - Uses chunked processing for large files
@@ -119,6 +136,8 @@ The duplicate detection algorithm works in several steps:
 - Optimizes database operations with prepared statements
 - Employs efficient string concatenation strategies
 - Uses binary search for document position lookup
+
+---
 
 ## Testing
 
@@ -135,6 +154,8 @@ Run all tests with:
 cd build && ctest --verbose
 ```
 
+---
+
 ## Contributing
 
 1. Fork the repository
@@ -143,6 +164,7 @@ cd build && ctest --verbose
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
+---
 
 ## Acknowledgments
 
@@ -150,6 +172,7 @@ cd build && ctest --verbose
 - UTF-8 handling based on the Unicode Standard Version 14.0
 - SQLite integration influenced by SQLite documentation and best practices
 
+---
 
 ## License
 
